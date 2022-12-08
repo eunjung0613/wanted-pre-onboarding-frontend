@@ -1,10 +1,12 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import styled from "styled-components";
 import { motion } from "framer-motion";
 import { FadeInUpVariants } from "../constants/motion/index";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function Signin() {
+  const baseURL = "https://pre-onboarding-selection-task.shop";
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [emailMessage, setEmailMessage] = useState("");
@@ -14,7 +16,7 @@ function Signin() {
   const [checkPassword, setCheckPassword] = useState(false);
 
   const EmailCheck = useCallback((e) => {
-    const Regex = /^[a-zA-Z0-9+-\_.]+@+$/;
+    const Regex = /^[a-zA-Z0-9+-\_.]*@[a-zA-Z0-9+-\_.]*$/;
     const CurrentEmail = e.target.value;
     setEmail(CurrentEmail);
 
@@ -35,6 +37,45 @@ function Signin() {
       setCheckPassword(false);
     } else {
       setCheckPassword(true);
+    }
+  }, []);
+
+  const LoginHandle = (e) => {
+    e.preventDefault();
+
+    axios
+      .post(
+        `${baseURL}/auth/signin`,
+        JSON.stringify({ email: email, password: password }),
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+        {
+          withCredentials: true,
+        }
+      )
+      .then((res) => {
+        console.log(res);
+        console.log(res.data.access_token);
+        if (typeof res.data.access_token !== "undefined") {
+          localStorage.setItem("token", res.data.access_token);
+          navigate("/todo");
+        } else if (typeof res.data.access_token == "undefined") {
+          alert("없는 회원입니다.");
+          navigate("/signup");
+          console.log("로그인 실패");
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  useEffect(() => {
+    if (!localStorage.getItem("token")) {
+      navigate("/todo");
     }
   }, []);
 
@@ -107,6 +148,7 @@ function Signin() {
               variants={FadeInUpVariants}
               viewport={{ once: false }}
               disabled={!(checkEmail && checkPassword)}
+              onClick={LoginHandle}
             >
               로그인
             </Button>
@@ -137,7 +179,7 @@ const MainWrap = styled.div`
 const Title = styled(motion.h1)`
   color: #d1d37b;
   font-size: 3em;
-  margin-top: 25%;
+  margin-top: 15%;
   font-family: "Kenia", cursive;
   text-shadow: 0.3em 0.3em #e7e8ba;
 `;

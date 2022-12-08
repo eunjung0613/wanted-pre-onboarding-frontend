@@ -2,8 +2,12 @@ import React, { useCallback, useState } from "react";
 import styled from "styled-components";
 import { motion } from "framer-motion";
 import { FadeInUpVariants } from "../constants/motion/index";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function Signup() {
+  const BASE_URL = "https://pre-onboarding-selection-task.shop/";
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [emailMessage, setEmailMessage] = useState("");
   const [password, setPassword] = useState("");
@@ -12,7 +16,7 @@ function Signup() {
   const [checkPassword, setCheckPassword] = useState(false);
 
   const EmailCheck = useCallback((e) => {
-    const Regex = /^[a-zA-Z0-9+-\_.]+@+$/;
+    const Regex = /^[a-zA-Z0-9+-\_.]*@[a-zA-Z0-9+-\_.]*$/;
     const CurrentEmail = e.target.value;
     setEmail(CurrentEmail);
 
@@ -35,6 +39,39 @@ function Signup() {
       setCheckPassword(true);
     }
   }, []);
+
+  const SignupHandle = (e) => {
+    e.preventDefault();
+    axios
+      .post(
+        `${BASE_URL}auth/signup`,
+        JSON.stringify({ email: email, password: password }),
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+        {
+          withCredentials: true,
+        }
+      )
+      .then((res) => {
+        console.log(res);
+        console.log(res.data.access_token);
+        if (typeof res.data.access_token !== "undefined") {
+          localStorage.setItem("token", res.data.access_token);
+          navigate("/todo");
+        } else if (typeof res.data.access_token == "undefined") {
+          alert("회원가입 실패");
+          console.log("회원가입 실패");
+        } else {
+          console.log(res);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   return (
     <MainWrap>
@@ -105,8 +142,9 @@ function Signup() {
               variants={FadeInUpVariants}
               viewport={{ once: false }}
               disabled={!(checkEmail && checkPassword)}
+              onClick={SignupHandle}
             >
-              로그인
+              회원가입
             </Button>
           </ButtonWrap>
         </FieldSet>
@@ -126,7 +164,7 @@ const MainWrap = styled.div`
 const Title = styled(motion.h1)`
   color: #d1d37b;
   font-size: 3em;
-  margin-top: 30%;
+  margin-top: 15%;
   font-family: "Kenia", cursive;
   text-shadow: 0.3em 0.3em #e7e8ba;
 `;
