@@ -4,6 +4,11 @@
 <p>his repository was created to submit a selection task for the Wanted Prionboarding FrontEnd Course </p>
 
 ## 1. 시작 방법
+[https://wanted-pre-onboarding-frontend-tan.vercel.app/](https://wanted-pre-onboarding-frontend-tan.vercel.app/)
+현재 상기 주소에 vercel로 배포되어 있습니다.
+
+만약 로컬로 실행하고 싶다면 레퍼지토리를 로컬로 clone 후 하단 명령어를 입력해주세요.
+
 ```git
   npm i
   npm start
