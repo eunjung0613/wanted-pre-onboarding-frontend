@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { defaultFadeInScaleVariants } from "../../constants/motion/index";
 import axios from "axios";
 
-function Todo({ todo, token, delete: deleteHandler, todos }) {
+function Todo({ todo, token, todos }) {
   const BASE_URL = "https://pre-onboarding-selection-task.shop/";
   const [Completed, setCompleted] = useState(todo.isCompleted);
   const [editMode, setEditMode] = useState(false);
@@ -17,6 +17,24 @@ function Todo({ todo, token, delete: deleteHandler, todos }) {
 
   const onchange = (e) => {
     setEditTodo(e.target.value);
+  };
+
+  const deleteHandler = (id) => {
+    axios
+      .delete(`${BASE_URL}todos/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(() => {
+        setTodoList(todoList.filter((todo) => todo.id !== id));
+      })
+      .then(() => {
+        window.location.reload();
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   };
 
   const updateHandler = (targetId, todo, isCompleted) => {
@@ -124,14 +142,6 @@ function Todo({ todo, token, delete: deleteHandler, todos }) {
           </Update>
           &nbsp;
           <Update onClick={EditModeHandler}>취소</Update>&nbsp;
-          <Delete
-            onClick={(e) => {
-              e.preventDefault();
-              deleteHandler(todo.id);
-            }}
-          >
-            삭제
-          </Delete>
         </>
       ) : (
         <>

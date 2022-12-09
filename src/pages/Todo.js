@@ -13,21 +13,6 @@ function Todo() {
   const [checklist, setCheckList] = useState(false);
   const navigate = useNavigate();
 
-  const deleteHandler = (id) => {
-    axios
-      .delete(`${BASE_URL}todos/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then(() => {
-        setTodoList(todoList.filter((todo) => todo.id !== id));
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
-
   useEffect(() => {
     if (!localStorage.getItem("token")) {
       navigate("/");
@@ -70,12 +55,7 @@ function Todo() {
       <FieldSet>
         {checklist ? (
           todoList.map((item) => (
-            <TodoComponent
-              todo={item}
-              token={token}
-              delete={deleteHandler}
-              todos={todoList}
-            />
+            <TodoComponent todo={item} token={token} todos={todoList} />
           ))
         ) : (
           <></>
