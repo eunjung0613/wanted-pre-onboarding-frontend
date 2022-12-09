@@ -33,3 +33,11 @@
  ┗ 📜index.js
 ```
 
+### 3. 데모 영상
+각 기능 1. 로그인 2. TodoList CRUD 에 맞게 구현 및 녹화하였습니다. gif파일입니다.
+  1. LOGIN
+    ![Login](https://user-images.githubusercontent.com/37800677/206756523-cba9ac87-8636-4dcd-a8c1-d7877da2b7f9.gif)
+
+ 
+  2. CRUD
+    ![CRUD](https://user-images.githubusercontent.com/37800677/206756064-4331b8e2-6e25-407b-8ac3-84af181490c7.gif)
